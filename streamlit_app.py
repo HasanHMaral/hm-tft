@@ -77,3 +77,35 @@ if uploaded_file is not None:
         st.write(zaman_serisi)
     except Exception as e:
         st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
+
+# Encoder Fonksiyonları
+def yil_kodla(idx):
+    """Yıl bilgilerini kodlayan özel bir fonksiyon."""
+    return (idx.year - 2000) / 50
+
+# Ekleyicilerin Tanımlanması
+ekleyiciler = {
+    'cyclic': {'future': ['day', 'dayofweek', 'week', 'month']},
+    'datetime_attribute': {'future': ['day', 'dayofweek', 'week', 'month']},
+    'position': {'past': ['relative'], 'future': ['relative']},
+    'custom': {'past': [yil_kodla], 'future': [yil_kodla]},
+    'transformer': Scaler(),
+    'tz': 'CET'
+}
+
+ # Geçmiş bağımsız değişkenlerin seçilmesi
+    st.subheader("Geçmiş Bağımsız Değişkenler")
+    if data.shape[1] > 2:  # Eğer bağımsız değişkenler varsa
+        X_gecmis = data.iloc[:, 2:]  # İlk iki sütun hariç diğer sütunları al
+        st.write("Seçilen Bağımsız Değişkenler:")
+        st.write(X_gecmis.head())
+
+        try:
+            # TimeSeries nesnesi oluşturma
+            gecmis_bagimsiz = TimeSeries.from_dataframe(X_gecmis)
+            st.write("Geçmiş Bağımsız Değişkenlerin TimeSeries Nesnesi:")
+            st.write(gecmis_bagimsiz)
+        except Exception as e:
+            st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
+    else:
+        st.error("Veride bağımsız değişken sütunları bulunamadı.")
