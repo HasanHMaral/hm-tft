@@ -45,8 +45,7 @@ if uploaded_file is not None:
 
 else:
     st.warning("Lütfen bir CSV dosyası yükleyin.")
-"""
-# TimeSeries Nesnesi Oluşturma
+"""# TimeSeries Nesnesi Oluşturma
 st.subheader("TimeSeries Nesnesi")
 zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
 st.write("TimeSeries Nesnesi Başarıyla Oluşturuldu!")
