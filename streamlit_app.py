@@ -20,48 +20,31 @@ st.info('Bu uygulama derin öğrenme modeli ile tahmin yapar!')
 
 
 
-# Dosya yükleme bileşeni
-uploaded_file = st.file_uploader("Hava Kalitesi Verisini Yükleyin (CSV formatında)", type="csv")
-
-# Dosya yüklendiyse
+# Veri yükleme ve işleme
+uploaded_file = st.file_uploader("Lütfen hava kalitesi verisini yükleyin (CSV formatında)", type=["csv"])
 if uploaded_file is not None:
-    # Veriyi yükleme ve indeksi ayarlama
     data = pd.read_csv(uploaded_file, index_col="ds", parse_dates=True)
-    
-    # Veri hakkında bilgi StringIO ile yakalama
-    buffer = io.StringIO()
-    data.info(buf=buffer)
-    info_str = buffer.getvalue()
-    
-    # Veri hakkında bilgiyi yazdırma
-    st.write("Yüklenen Verinin Bilgisi:")
-    st.text(info_str)  # Bilgiyi Streamlit'te metin olarak gösterir
-    
-    # İlk birkaç satırı görüntüleme
-    st.write("Verinin İlk 5 Satırı:")
-    st.write(data.head())
-    
-# Veriyi günlük frekansa ayarlama
     data = data.asfreq("d")
-# Günlük PM10 Değeri Görselleştirme
-    st.subheader("Günlük PM10 Değeri")
-    fig, ax = plt.subplots()
-    ax.plot(data.index, data['y'])
-    ax.set_title("Günlük PM10 Değeri")
-    ax.set_xlabel("Tarih")
-    ax.set_ylabel("PM10")
-    st.pyplot(fig)
-# Otokorelasyon Grafiği
-    st.subheader("Otokorelasyon Grafiği (ACF)")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    plot_acf(data['y'].dropna(), lags=100, ax=ax)  # Null değerleri kaldırmayı unutmayın
-    st.pyplot(fig)
-# Parsiyel Otokorelasyon Grafiği
-st.subheader("Parsiyel Otokorelasyon Grafiği (PACF)")
-fig, ax = plt.subplots(figsize=(10, 6))
-plot_pacf(data['y'], lags=100, ax=ax, method='ols')  # Örnek: OLS yöntemi
-st.pyplot(fig)
 
+    # Veriyi görselleştirme
+    st.subheader("Günlük PM10 Değeri Grafiği")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    data['y'].plot(title='Günlük PM10 Değeri', ax=ax)
+    st.pyplot(fig)
+
+    # Otokorelasyon ve Parsiyel Otokorelasyon Grafikleri
+    st.subheader("Otokorelasyon Grafiği")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plot_acf(data['y'], lags=100, ax=ax)
+    st.pyplot(fig)
+
+    st.subheader("Parsiyel Otokorelasyon Grafiği")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plot_pacf(data['y'], lags=100, ax=ax)
+    st.pyplot(fig)
+
+else:
+    st.warning("Lütfen bir CSV dosyası yükleyin.")
 # TimeSeries Nesnesi Oluşturma
 st.subheader("TimeSeries Nesnesi")
 zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
