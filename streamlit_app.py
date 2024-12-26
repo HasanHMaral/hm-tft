@@ -71,14 +71,12 @@ else:
 
 # TimeSeries Nesnesi Oluşturma
 st.subheader("TimeSeries Nesnesi")
-
-try:
-    # TimeSeries nesnesini oluşturma
+if 'y' in data.columns and data['y'].dtype in [np.int64, np.float64]:
     zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
     st.write("TimeSeries Nesnesi Başarıyla Oluşturuldu!")
     st.write(zaman_serisi)
-except Exception as e:
-    st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}. Lütfen 'y' sütununun varlığını ve veri tipinin uygunluğunu kontrol edin.")
+else:
+    st.error("Veri çerçevesinde 'y' sütunu bulunamadı veya veri tipi uygun değil.")
 
 # Encoder Fonksiyonu (gerekirse değiştirin)
 def yil_kodla(idx):
