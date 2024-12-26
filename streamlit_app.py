@@ -9,8 +9,7 @@ st.title('🎈 Hava Kirliliği Tahmini Uygulaması')
 
 st.info('Bu uygulama derin öğrenme modeli ile tahmin yapar!')
 
-# Uygulama başlığı
-st.title("Hava Kalitesi Verisi Yükleme ve İşleme")
+
 
 # Dosya yükleme bileşeni
 uploaded_file = st.file_uploader("Hava Kalitesi Verisini Yükleyin (CSV formatında)", type="csv")
