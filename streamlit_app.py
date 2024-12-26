@@ -1,5 +1,5 @@
 import streamlit as st
 
-st.title('🎈 App Name')
+st.title('🎈 Hava Kirliliği Tahmini Uygulaması')
 
-st.write('Hello world!')
+st.info('Bu uygulama derin öğrenme modeli ile tahmin yapar!')
