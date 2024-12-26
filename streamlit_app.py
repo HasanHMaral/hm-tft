@@ -94,20 +94,18 @@ ekleyiciler = {
 }
 
 # Geçmiş bağımsız değişkenlerin seçilmesi
-if data.shape[1] > 2:  # Eğer 2'den fazla sütun varsa
-    X_gecmis = data.iloc[:, 2:]  # İlk iki sütun hariç diğer sütunları al
-    st.write("Geçmiş Bağımsız Değişkenler (İlk 5 Satır):")
-    st.write(X_gecmis.head())
 
-    try:
-        # TimeSeries nesnesi oluşturma
-        gecmis_bagimsiz = TimeSeries.from_dataframe(X_gecmis)
-        st.write("Geçmiş Bağımsız Değişkenlerin TimeSeries Nesnesi:")
-        st.write(gecmis_bagimsiz)
-    except Exception as e:
-        st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
-else:
-    st.error("Yeterli bağımsız değişken sütunu bulunamadı.")
+X_gecmis = data.iloc[:, 2:]  # İlk iki sütun hariç diğer sütunları al
+st.write("Geçmiş Bağımsız Değişkenler (İlk 5 Satır):")
+st.write(X_gecmis.head())
+try:
+# TimeSeries nesnesi oluşturma
+gecmis_bagimsiz = TimeSeries.from_dataframe(X_gecmis)
+st.write("Geçmiş Bağımsız Değişkenlerin TimeSeries Nesnesi:")
+st.write(gecmis_bagimsiz)
+except Exception as e:
+st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
+
 
 # Gelecek Bağımsız Değişkenlerin Hazırlanması
 st.subheader("Gelecek Bağımsız Değişkenlerin Hazırlanması")
