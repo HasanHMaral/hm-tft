@@ -18,13 +18,19 @@ st.title('🎈 Hava Kirliliği Tahmini Uygulaması')
 
 st.info('Bu uygulama derin öğrenme modeli ile tahmin yapar!')
 
+def yukle_ve_isle(dosya_adi):
+    """
+    Veri yükler, işler ve görselleştirir.
 
+    Args:
+        dosya_adi (str): Yüklenecek CSV dosyasının adı.
 
-# Veri yükleme ve işleme
-uploaded_file = st.file_uploader("Lütfen hava kalitesi verisini yükleyin (CSV formatında)", type=["csv"])
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file, index_col="ds", parse_dates=True)
-    data = data.asfreq("d")
+    Returns:
+        pandas.DataFrame: İşlenmiş veri çerçevesi.
+    """
+
+    data = pd.read_csv(dosya_adi, index_col='ds', parse_dates=True)
+    data = data.asfreq('d')
 
     # Veriyi görselleştirme
     st.subheader("Günlük PM10 Değeri Grafiği")
@@ -39,9 +45,16 @@ if uploaded_file is not None:
     st.pyplot(fig)
 
     st.subheader("Parsiyel Otokorelasyon Grafiği")
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 6)
     plot_pacf(data['y'], lags=100, ax=ax)
     st.pyplot(fig)
+
+    return data
+
+# Veri yükleme ve işleme
+uploaded_file = st.file_uploader("Lütfen hava kalitesi verisini yükleyin (CSV formatında)", type=["csv"])
+if uploaded_file is not None:
+    yukle_ve_isle(uploaded_file)  # Fonksiyonu burada çağırıyoruz
 
 else:
     st.warning("Lütfen bir CSV dosyası yükleyin.")
