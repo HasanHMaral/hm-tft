@@ -121,16 +121,72 @@ def gelecek_bagimsiz_hazirla(gecmis_bagimsiz, gelecek_veri_dosyasi):
     st.write("Gelecek Bağımsız Değişkenler:")
     st.write(gelecek_bagimsiz)
     return gelecek_bagimsiz
+def zaman_serisi_olcekle(zaman_serisi):
+    """
+    Zaman serisini ölçekler.
+
+    Args:
+        zaman_serisi (TimeSeries): Zaman serisi nesnesi.
+
+    Returns:
+        Scaler, TimeSeries: Ölçekleyici nesnesi ve ölçeklenmiş zaman serisi.
+    """
+    olcekleyici = Scaler()
+    trans_zaman_serisi = olcekleyici.fit_transform(zaman_serisi)
+    st.write("Zaman Serisi Ölçeklendirilmiş:")
+    st.write(trans_zaman_serisi)
+    return olcekleyici, trans_zaman_serisi
+
+def bagimsiz_degiskenleri_olcekle(gecmis_bagimsiz, gelecek_bagimsiz):
+    """
+    Geçmiş ve gelecek bağımsız değişkenleri ölçekler.
+
+    Args:
+        gecmis_bagimsiz (TimeSeries): Geçmiş bağımsız değişkenler.
+        gelecek_bagimsiz (TimeSeries): Gelecek bağımsız değişkenler.
+
+    Returns:
+        Scaler, TimeSeries, TimeSeries: Ölçekleyici nesnesi ve ölçeklenmiş bağımsız değişkenler.
+    """
+    olcekleyici = Scaler()
+    transformed_gecmis_bagimsiz = olcekleyici.fit_transform(gecmis_bagimsiz)
+    st.write("Geçmiş Bağımsız Değişkenler Ölçeklendirilmiş:")
+    st.write(transformed_gecmis_bagimsiz)
+
+    transformed_gelecek_bagimsiz = olcekleyici.fit_transform(gelecek_bagimsiz)
+    st.write("Gelecek Bağımsız Değişkenler Ölçeklendirilmiş:")
+    st.write(transformed_gelecek_bagimsiz)
+
+    return olcekleyici, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz
+
 uploaded_file = st.file_uploader("Lütfen hava kalitesi verisini yükleyin (CSV formatında)", type=["csv"])
 if uploaded_file is not None:
-    data = yukle_ve_isle(uploaded_file)  # Daha önce tanımlanmış fonksiyon
+    # Veri yükleme ve işleme
+    data = yukle_ve_isle(uploaded_file)  # Daha önce tanımlanan veri yükleme ve işleme fonksiyonu
+
+    # Zaman serisi oluşturma
     zaman_serisi = zaman_serisi_olustur(data)
+
+    # Encoder ve ekleyiciler oluşturma
     ekleyiciler = encoder_ve_ekleyici_olustur()
+
+    # Geçmiş bağımsız değişkenleri hazırlama
     gecmis_bagimsiz = gecmis_bagimsiz_hazirla(data)
 
-    # Gelecek bağımsız değişkenler için dosya seçimi
+    # Gelecek bağımsız değişkenler için dosya yükleme
     uploaded_future_file = st.file_uploader("Gelecek bağımsız değişken verilerini yükleyin (CSV formatında)", type=["csv"])
     if uploaded_future_file:
+        # Gelecek bağımsız değişkenleri hazırlama
         gelecek_bagimsiz = gelecek_bagimsiz_hazirla(gecmis_bagimsiz, uploaded_future_file)
+
+        # Zaman serisini ve bağımsız değişkenleri ölçekleme
+        olcekleyici1, trans_zaman_serisi = zaman_serisi_olcekle(zaman_serisi)
+        olcekleyici2, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz = bagimsiz_degiskenleri_olcekle(
+            gecmis_bagimsiz, gelecek_bagimsiz
+        )
+
+        st.success("Tüm veri işleme ve ölçeklendirme adımları başarıyla tamamlandı!")
+    else:
+        st.warning("Lütfen gelecek bağımsız değişken verilerini yükleyin.")
 else:
     st.warning("Lütfen bir CSV dosyası yükleyin.")
