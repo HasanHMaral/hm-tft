@@ -150,3 +150,47 @@ if uploaded_future:
         st.write(transformed_gelecek_bagimsiz)
     except Exception as e:
         st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
+
+# Model Oluşturma ve Çapraz Doğrulama
+st.subheader("TFT Modeli Oluşturma ve Eğitim")
+
+# TFT model parametreleri için kullanıcıdan giriş alımı
+input_chunk_length = st.number_input("Input Chunk Length:", min_value=10, max_value=365, value=90, step=10)
+output_chunk_length = st.number_input("Output Chunk Length:", min_value=1, max_value=60, value=30, step=1)
+hidden_size = st.number_input("Hidden Size:", min_value=4, max_value=128, value=16, step=4)
+lstm_layers = st.number_input("LSTM Layers:", min_value=1, max_value=5, value=2, step=1)
+num_attention_heads = st.number_input("Number of Attention Heads:", min_value=1, max_value=8, value=4, step=1)
+dropout = st.slider("Dropout Rate:", min_value=0.0, max_value=0.5, value=0.1, step=0.01)
+batch_size = st.number_input("Batch Size:", min_value=8, max_value=128, value=64, step=8)
+n_epochs = st.number_input("Number of Epochs:", min_value=1, max_value=100, value=10, step=1)
+use_static_covariates = st.checkbox("Use Static Covariates", value=True)
+accelerator = st.selectbox("Trainer Accelerator:", ["gpu", "cpu"], index=0)
+devices = st.number_input("Number of Devices:", min_value=1, max_value=4, value=1, step=1)
+
+if st.button("Modeli Eğit"):
+    try:
+        # TFT modeli oluşturma
+        model = TFTModel(
+            input_chunk_length=input_chunk_length,
+            output_chunk_length=output_chunk_length,
+            hidden_size=hidden_size,
+            lstm_layers=lstm_layers,
+            num_attention_heads=num_attention_heads,
+            dropout=dropout,
+            batch_size=batch_size,
+            n_epochs=n_epochs,
+            add_encoders=ekleyiciler,  # Önceden tanımlanmış ekleyiciler
+            use_static_covariates=use_static_covariates,
+            pl_trainer_kwargs={'accelerator': accelerator, 'devices': [devices]}
+        )
+
+        # Modeli eğitim verileriyle eğitme
+        model.fit(
+            trans_zaman_serisi,
+            past_covariates=transformed_gecmis_bagimsiz,
+            future_covariates=transformed_gelecek_bagimsiz
+        )
+        st.success("Model başarıyla eğitildi!")
+
+    except Exception as e:
+        st.error(f"Model oluşturulurken veya eğitilirken bir hata oluştu: {str(e)}")
