@@ -149,9 +149,20 @@ if uploaded_future:
         st.write("Gelecek Bağımsız Değişkenler Ölçeklendirilmiş:")
         st.write(transformed_gelecek_bagimsiz)
 
-        # Geçmiş ve gelecek bağımsız değişkenlerin eksik verilerini kontrol etme
-        st.write("Geçmiş Bağımsız Değişkenlerde Eksik Değerler:", transformed_gecmis_bagimsiz.isnull().sum())
-        st.write("Gelecek Bağımsız Değişkenlerde Eksik Değerler:", transformed_gelecek_bagimsiz.isnull().sum())
+        # Eksik verileri kontrol etme
+    if transformed_gecmis_bagimsiz.has_missing_values():
+        st.warning("Geçmiş bağımsız değişkenlerde eksik değerler bulundu. Eksik veriler dolduruluyor...")
+        transformed_gecmis_bagimsiz = transformed_gecmis_bagimsiz.fill_missing_values()
+        st.success("Geçmiş bağımsız değişkenlerdeki eksik değerler dolduruldu.")
+
+    if transformed_gelecek_bagimsiz.has_missing_values():
+        st.warning("Gelecek bağımsız değişkenlerde eksik değerler bulundu. Eksik veriler dolduruluyor...")
+        transformed_gelecek_bagimsiz = transformed_gelecek_bagimsiz.fill_missing_values()
+        st.success("Gelecek bağımsız değişkenlerdeki eksik değerler dolduruldu.")
+
+    # Kontrol sonrası bilgi mesajı
+    st.write("Eksik veri kontrolü tamamlandı.")
+
     except Exception as e:
         st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
 
