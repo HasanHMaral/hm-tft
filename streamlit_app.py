@@ -262,8 +262,19 @@ if uploaded_file is not None:
         dropout = st.slider("Dropout Rate:", min_value=0.0, max_value=0.5, value=0.1, step=0.01)
         batch_size = st.number_input("Batch Size:", min_value=8, max_value=128, value=64, step=8)
         n_epochs = st.number_input("Number of Epochs:", min_value=1, max_value=100, value=10, step=1)
-        accelerator = st.selectbox("Trainer Accelerator:", ["gpu", "cpu"], index=0)
+        # GPU veya CPU seçimi
+        accelerator = st.selectbox("Trainer Accelerator:", ["gpu", "cpu"], index=1)  # Varsayılan CPU
         devices = st.number_input("Number of Devices:", min_value=1, max_value=4, value=1, step=1)
+
+if accelerator == "gpu":
+    # GPU kontrolü
+    import torch
+    if not torch.cuda.is_available():
+        st.error("GPU desteklenmiyor! Lütfen 'Trainer Accelerator' seçeneğini 'cpu' olarak ayarlayın.")
+        accelerator = "cpu"  # GPU yoksa CPU'ya düşür
+        devices = 1
+    else:
+        st.success("GPU destekleniyor ve kullanılabilir!")
 
         if st.button("Modeli Eğit"):
             model = tft_model_egit(
