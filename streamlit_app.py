@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from darts.timeseries import TimeSeries
 from darts.models import TFTModel
 from darts.explainability import TFTExplainer
+from statsmodels.graphics.tsaplots import plot_acf
 import io
 
 st.title('🎈 Hava Kirliliği Tahmini Uygulaması')
