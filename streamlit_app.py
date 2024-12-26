@@ -32,4 +32,14 @@ if uploaded_file is not None:
     # İlk birkaç satırı görüntüleme
     st.write("Verinin İlk 5 Satırı:")
     st.write(data.head())
-
+    
+# Veriyi günlük frekansa ayarlama
+    data = data.asfreq("d")
+# Günlük PM10 Değeri Görselleştirme
+    st.subheader("Günlük PM10 Değeri")
+    fig, ax = plt.subplots()
+    ax.plot(data.index, data['y'])
+    ax.set_title("Günlük PM10 Değeri")
+    ax.set_xlabel("Tarih")
+    ax.set_ylabel("PM10")
+    st.pyplot(fig)
