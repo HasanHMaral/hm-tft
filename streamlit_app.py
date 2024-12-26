@@ -148,6 +148,10 @@ if uploaded_future:
         transformed_gelecek_bagimsiz = olcekleyici2.fit_transform(gelecek_bagimsiz)
         st.write("Gelecek Bağımsız Değişkenler Ölçeklendirilmiş:")
         st.write(transformed_gelecek_bagimsiz)
+
+        # Geçmiş ve gelecek bağımsız değişkenlerin eksik verilerini kontrol etme
+st.write("Geçmiş Bağımsız Değişkenlerde Eksik Değerler:", transformed_gecmis_bagimsiz.isnull().sum())
+st.write("Gelecek Bağımsız Değişkenlerde Eksik Değerler:", transformed_gelecek_bagimsiz.isnull().sum())
     except Exception as e:
         st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
 
