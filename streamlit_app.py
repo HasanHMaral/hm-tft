@@ -71,6 +71,7 @@ else:
 
 # TimeSeries Nesnesi Oluşturma
 st.subheader("TimeSeries Nesnesi")
+
 try:
     # TimeSeries nesnesini oluşturma
     zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
