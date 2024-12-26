@@ -24,3 +24,36 @@ if uploaded_file is not None:
     ax.plot(data.index, data['y'])
     ax.set_title("Günlük PM10 Değerleri")
     st.pyplot(fig)
+# Model Eğitimi
+    st.header("Model Eğitimi")
+    if st.button("Modeli Eğit"):
+        # Örnek parametrelerle model eğitimi
+        model = TFTModel(
+            input_chunk_length=30,
+            output_chunk_length=7,
+            hidden_size=32,
+            num_attention_heads=4,
+            dropout=0.1,
+            batch_size=32,
+            lstm_layers=1,
+            n_epochs=20,
+            use_static_covariates=True,
+            pl_trainer_kwargs={'accelerator': 'gpu', "devices": [0]},
+        )
+        zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
+        model.fit(zaman_serisi)
+        st.success("Model eğitimi tamamlandı!")
+
+        # Tahmin
+        st.header("Tahmin Sonuçları")
+        tahmin = model.predict(n=7, series=zaman_serisi)
+        st.write("Tahmin Edilen Değerler:")
+        st.write(tahmin.pd_series())
+
+        # Tahmin Görselleştirme
+        fig, ax = plt.subplots()
+        ax.plot(zaman_serisi.time_index, zaman_serisi.values(), label="Gerçek")
+        ax.plot(tahmin.time_index, tahmin.values(), label="Tahmin", linestyle='dashed')
+        ax.set_title("PM10 Tahmini")
+        ax.legend()
+        st.pyplot(fig)
