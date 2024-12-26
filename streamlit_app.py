@@ -159,6 +159,72 @@ def bagimsiz_degiskenleri_olcekle(gecmis_bagimsiz, gelecek_bagimsiz):
 
     return olcekleyici, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz
 
+def tft_model_egit(
+    trans_zaman_serisi, 
+    transformed_gecmis_bagimsiz, 
+    transformed_gelecek_bagimsiz, 
+    ekleyiciler,
+    input_chunk_length=90, 
+    output_chunk_length=30, 
+    hidden_size=16, 
+    lstm_layers=2, 
+    num_attention_heads=4, 
+    dropout=0.1, 
+    batch_size=64, 
+    n_epochs=10,
+    accelerator="gpu",
+    devices=1
+):
+    """
+    TFT modeli oluşturur ve eğitir.
+
+    Args:
+        trans_zaman_serisi (TimeSeries): Zaman serisi verisi.
+        transformed_gecmis_bagimsiz (TimeSeries): Geçmiş bağımsız değişkenler.
+        transformed_gelecek_bagimsiz (TimeSeries): Gelecek bağımsız değişkenler.
+        ekleyiciler (dict): Zaman serisi ekleyicileri.
+        input_chunk_length (int): Model giriş uzunluğu.
+        output_chunk_length (int): Model çıkış uzunluğu.
+        hidden_size (int): Gizli katman boyutu.
+        lstm_layers (int): LSTM katman sayısı.
+        num_attention_heads (int): Dikkat başlıklarının sayısı.
+        dropout (float): Dropout oranı.
+        batch_size (int): Eğitim batch boyutu.
+        n_epochs (int): Eğitim epoch sayısı.
+        accelerator (str): Eğitim için kullanılacak cihaz ('gpu' veya 'cpu').
+        devices (int): Kullanılacak cihaz sayısı.
+
+    Returns:
+        TFTModel: Eğitilmiş TFT modeli.
+    """
+    try:
+        # TFT modeli oluşturma
+        model = TFTModel(
+            input_chunk_length=input_chunk_length,
+            output_chunk_length=output_chunk_length,
+            hidden_size=hidden_size,
+            lstm_layers=lstm_layers,
+            num_attention_heads=num_attention_heads,
+            dropout=dropout,
+            batch_size=batch_size,
+            n_epochs=n_epochs,
+            add_encoders=ekleyiciler,
+            use_static_covariates=True,
+            pl_trainer_kwargs={'accelerator': accelerator, 'devices': [devices]}
+        )
+
+        # Modeli eğitme
+        model.fit(
+            trans_zaman_serisi,
+            past_covariates=transformed_gecmis_bagimsiz,
+            future_covariates=transformed_gelecek_bagimsiz
+        )
+        st.success("Model başarıyla eğitildi!")
+        return model
+    except Exception as e:
+        st.error(f"Model oluşturulurken veya eğitilirken bir hata oluştu: {str(e)}")
+        return None
+
 uploaded_file = st.file_uploader("Lütfen hava kalitesi verisini yükleyin (CSV formatında)", type=["csv"])
 if uploaded_file is not None:
     # Veri yükleme ve işleme
@@ -186,6 +252,36 @@ if uploaded_file is not None:
         )
 
         st.success("Tüm veri işleme ve ölçeklendirme adımları başarıyla tamamlandı!")
+
+        # Model eğitimi için parametre girişleri ve eğitim işlemi
+        input_chunk_length = st.number_input("Input Chunk Length:", min_value=10, max_value=365, value=90, step=10)
+        output_chunk_length = st.number_input("Output Chunk Length:", min_value=1, max_value=60, value=30, step=1)
+        hidden_size = st.number_input("Hidden Size:", min_value=4, max_value=128, value=16, step=4)
+        lstm_layers = st.number_input("LSTM Layers:", min_value=1, max_value=5, value=2, step=1)
+        num_attention_heads = st.number_input("Number of Attention Heads:", min_value=1, max_value=8, value=4, step=1)
+        dropout = st.slider("Dropout Rate:", min_value=0.0, max_value=0.5, value=0.1, step=0.01)
+        batch_size = st.number_input("Batch Size:", min_value=8, max_value=128, value=64, step=8)
+        n_epochs = st.number_input("Number of Epochs:", min_value=1, max_value=100, value=10, step=1)
+        accelerator = st.selectbox("Trainer Accelerator:", ["gpu", "cpu"], index=0)
+        devices = st.number_input("Number of Devices:", min_value=1, max_value=4, value=1, step=1)
+
+        if st.button("Modeli Eğit"):
+            model = tft_model_egit(
+                trans_zaman_serisi,
+                transformed_gecmis_bagimsiz,
+                transformed_gelecek_bagimsiz,
+                ekleyiciler,
+                input_chunk_length=input_chunk_length,
+                output_chunk_length=output_chunk_length,
+                hidden_size=hidden_size,
+                lstm_layers=lstm_layers,
+                num_attention_heads=num_attention_heads,
+                dropout=dropout,
+                batch_size=batch_size,
+                n_epochs=n_epochs,
+                accelerator=accelerator,
+                devices=devices
+            )
     else:
         st.warning("Lütfen gelecek bağımsız değişken verilerini yükleyin.")
 else:
