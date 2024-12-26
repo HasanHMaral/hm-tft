@@ -98,8 +98,7 @@ ekleyiciler = {
 X_gecmis = data.iloc[:, 2:]  # İlk iki sütun hariç diğer sütunları al
 st.write("Geçmiş Bağımsız Değişkenler (İlk 5 Satır):")
 st.write(X_gecmis.head())
-    try:
-    # TimeSeries nesnesi oluşturma
+    try:# TimeSeries nesnesi oluşturma
     gecmis_bagimsiz = TimeSeries.from_dataframe(X_gecmis)
     st.write("Geçmiş Bağımsız Değişkenlerin TimeSeries Nesnesi:")
     st.write(gecmis_bagimsiz)
