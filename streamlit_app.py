@@ -108,3 +108,26 @@ if data.shape[1] > 2:  # Eğer 2'den fazla sütun varsa
         st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
 else:
     st.error("Yeterli bağımsız değişken sütunu bulunamadı.")
+
+# Gelecek Bağımsız Değişkenlerin Hazırlanması
+st.subheader("Gelecek Bağımsız Değişkenlerin Hazırlanması")
+
+# Gelecek verisini yüklemek için dosya yükleme bileşeni
+uploaded_future = st.file_uploader("Gelecek Verisini Yükleyin (CSV formatında)", type="csv")
+
+if uploaded_future:
+    # Gelecek veriyi yükleme
+    gelecek_veri = pd.read_csv(uploaded_future, index_col="ds", parse_dates=True)
+    
+    # Gelecek bağımsız değişkenleri seçme
+    X_gelecek = gelecek_veri.iloc[:, 1:]  # İlk sütun hariç diğer sütunları al
+    st.write("Gelecek Bağımsız Değişkenler:")
+    st.write(X_gelecek.head())
+
+    # TimeSeries nesnesi oluşturma
+    try:
+        gelecek_bagimsiz = TimeSeries.from_dataframe(X_gelecek)
+        st.write("Gelecek Bağımsız Değişkenlerin TimeSeries Nesnesi:")
+        st.write(gelecek_bagimsiz)
+    except Exception as e:
+        st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
