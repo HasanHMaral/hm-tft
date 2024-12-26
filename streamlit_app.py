@@ -17,3 +17,10 @@ if uploaded_file is not None:
     data = pd.read_csv(uploaded_file, index_col="ds", parse_dates=True)
     st.write("Yüklenen Veri:")
     st.write(data.head())
+
+# Görselleştirme
+    st.subheader("Veri Görselleştirme")
+    fig, ax = plt.subplots()
+    ax.plot(data.index, data['y'])
+    ax.set_title("Günlük PM10 Değerleri")
+    st.pyplot(fig)
