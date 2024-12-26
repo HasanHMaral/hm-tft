@@ -129,5 +129,24 @@ if uploaded_future:
         gelecek_bagimsiz = TimeSeries.from_dataframe(X_gelecek)
         st.write("Gelecek Bağımsız Değişkenlerin TimeSeries Nesnesi:")
         st.write(gelecek_bagimsiz)
+
+         # Ölçekleyiciler
+        olcekleyici1 = Scaler()
+        olcekleyici2 = Scaler()
+
+        # Zaman serisini ölçekleme
+        trans_zaman_serisi = olcekleyici1.fit_transform(zaman_serisi)
+        st.write("Zaman Serisi Ölçeklendirilmiş:")
+        st.write(trans_zaman_serisi)
+
+        # Geçmiş bağımsız değişkenleri ölçekleme
+        transformed_gecmis_bagimsiz = olcekleyici2.fit_transform(gecmis_bagimsiz)
+        st.write("Geçmiş Bağımsız Değişkenler Ölçeklendirilmiş:")
+        st.write(transformed_gecmis_bagimsiz)
+
+        # Gelecek bağımsız değişkenleri ölçekleme
+        transformed_gelecek_bagimsiz = olcekleyici2.fit_transform(gelecek_bagimsiz)
+        st.write("Gelecek Bağımsız Değişkenler Ölçeklendirilmiş:")
+        st.write(transformed_gelecek_bagimsiz)
     except Exception as e:
         st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
