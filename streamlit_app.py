@@ -67,3 +67,13 @@ if uploaded_file is not None:
         st.pyplot(fig)
     else:
         st.error("Veride 'y' sütunu bulunamadı. Lütfen doğru dosyayı yükleyin.")
+
+# TimeSeries Nesnesi Oluşturma
+    st.subheader("TimeSeries Nesnesi")
+    try:
+        # TimeSeries nesnesini oluşturma
+        zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
+        st.write("TimeSeries Nesnesi Başarıyla Oluşturuldu!")
+        st.write(zaman_serisi)
+    except Exception as e:
+        st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
