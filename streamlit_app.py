@@ -53,7 +53,7 @@ st.write(zaman_serisi)
 
 # Encoder Fonksiyonu (gerekirse değiştirin)
 def yil_kodla(idx):
-    """Yıl bilgilerini kodlayan özel bir fonksiyon."""
+    Yıl bilgilerini kodlayan özel bir fonksiyon.
     # Eğer gerekliyse farklı bir normalizasyon yöntemi kullanın
     return (idx.year - data['ds'].dt.year.min()) / (data['ds'].dt.year.max() - data['ds'].dt.year.min())
 # Ekleyicilerin Tanımlanması
