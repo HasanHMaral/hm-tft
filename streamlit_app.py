@@ -45,7 +45,7 @@ def yukle_ve_isle(dosya_adi):
     st.pyplot(fig)
 
     st.subheader("Parsiyel Otokorelasyon Grafiği")
-    fig, ax = plt.subplots(figsize=(10, 6)
+    fig, ax = plt.subplots(figsize=(10, 6))
     plot_pacf(data['y'], lags=100, ax=ax)
     st.pyplot(fig)
 
