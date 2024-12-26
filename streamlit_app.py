@@ -58,25 +58,15 @@ if uploaded_file is not None:
     st.pyplot(fig)
 # Parsiyel Otokorelasyon Grafiği
 st.subheader("Parsiyel Otokorelasyon Grafiği (PACF)")
-if 'y' in data.columns:
-    # Tüm sütunlar için eksik değer kontrolü
-    if data.isnull().values.any():
-        st.warning("Veri setinde eksik değerler bulundu. Eksik değerleri doldurun veya çıkarın.")
-    else:
-        fig, ax = plt.subplots(figsize=(10, 6))
-        plot_pacf(data['y'], lags=100, ax=ax, method='ols')  # Örnek: OLS yöntemi
-        st.pyplot(fig)
-else:
-    st.error("Veride 'y' sütunu bulunamadı. Lütfen doğru dosyayı yükleyin.")
+fig, ax = plt.subplots(figsize=(10, 6))
+plot_pacf(data['y'], lags=100, ax=ax, method='ols')  # Örnek: OLS yöntemi
+st.pyplot(fig)
 
 # TimeSeries Nesnesi Oluşturma
 st.subheader("TimeSeries Nesnesi")
-if 'y' in data.columns and data['y'].dtype in [np.int64, np.float64]:
-    zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
-    st.write("TimeSeries Nesnesi Başarıyla Oluşturuldu!")
-    st.write(zaman_serisi)
-else:
-    st.error("Veri çerçevesinde 'y' sütunu bulunamadı veya veri tipi uygun değil.")
+zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
+st.write("TimeSeries Nesnesi Başarıyla Oluşturuldu!")
+st.write(zaman_serisi)
 
 # Encoder Fonksiyonu (gerekirse değiştirin)
 def yil_kodla(idx):
