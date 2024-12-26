@@ -147,9 +147,11 @@ if uploaded_future:
         # Gelecek bağımsız değişkenleri ölçekleme
         transformed_gelecek_bagimsiz = olcekleyici2.fit_transform(gelecek_bagimsiz)
         st.write("Gelecek Bağımsız Değişkenler Ölçeklendirilmiş:")
-        st.write(transformed_gelecek_bagimsiz)
+        st.write(transformed_gelecek_bagimsiz)   
 
-        # Eksik verileri kontrol etme
+    except Exception as e:
+        st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
+# Eksik verileri kontrol etme
     if transformed_gecmis_bagimsiz.has_missing_values():
         st.warning("Geçmiş bağımsız değişkenlerde eksik değerler bulundu. Eksik veriler dolduruluyor...")
         transformed_gecmis_bagimsiz = transformed_gecmis_bagimsiz.fill_missing_values()
@@ -162,9 +164,6 @@ if uploaded_future:
 
     # Kontrol sonrası bilgi mesajı
     st.write("Eksik veri kontrolü tamamlandı.")
-
-    except Exception as e:
-        st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
 
 # Model Oluşturma ve Çapraz Doğrulama
 st.subheader("TFT Modeli Oluşturma ve Eğitim")
