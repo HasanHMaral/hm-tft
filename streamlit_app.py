@@ -98,12 +98,12 @@ ekleyiciler = {
 X_gecmis = data.iloc[:, 2:]  # İlk iki sütun hariç diğer sütunları al
 st.write("Geçmiş Bağımsız Değişkenler (İlk 5 Satır):")
 st.write(X_gecmis.head())
-    try:# TimeSeries nesnesi oluşturma
+if not X_gecmis.empty and 'tarih' in X_gecmis.columns:  # Örnek bir kontrol
     gecmis_bagimsiz = TimeSeries.from_dataframe(X_gecmis)
     st.write("Geçmiş Bağımsız Değişkenlerin TimeSeries Nesnesi:")
     st.write(gecmis_bagimsiz)
-    except Exception as e:
-    st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
+else:
+    st.error("X_gecmis DataFrame'i boş veya beklenen sütunları içermiyor.")
 
 
 # Gelecek Bağımsız Değişkenlerin Hazırlanması
