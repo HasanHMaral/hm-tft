@@ -56,33 +56,34 @@ if uploaded_file is not None:
     fig, ax = plt.subplots(figsize=(10, 6))
     plot_acf(data['y'].dropna(), lags=100, ax=ax)  # Null değerleri kaldırmayı unutmayın
     st.pyplot(fig)
-# Parsiyel otokorelasyon grafiği
-    st.subheader("Parsiyel Otokorelasyon Grafiği (PACF)")
-    if 'y' in data.columns:
-        if data['y'].isnull().sum() > 0:
-            data['y'] = data['y'].dropna()
-
-        fig, ax = plt.subplots(figsize=(10, 6))
-        plot_pacf(data['y'], lags=100, ax=ax, method='ywm')  # PACF grafiği
-        st.pyplot(fig)
+# Parsiyel Otokorelasyon Grafiği
+st.subheader("Parsiyel Otokorelasyon Grafiği (PACF)")
+if 'y' in data.columns:
+    # Tüm sütunlar için eksik değer kontrolü
+    if data.isnull().values.any():
+        st.warning("Veri setinde eksik değerler bulundu. Eksik değerleri doldurun veya çıkarın.")
     else:
-        st.error("Veride 'y' sütunu bulunamadı. Lütfen doğru dosyayı yükleyin.")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        plot_pacf(data['y'], lags=100, ax=ax, method='ols')  # Örnek: OLS yöntemi
+        st.pyplot(fig)
+else:
+    st.error("Veride 'y' sütunu bulunamadı. Lütfen doğru dosyayı yükleyin.")
 
 # TimeSeries Nesnesi Oluşturma
-    st.subheader("TimeSeries Nesnesi")
-    try:
-        # TimeSeries nesnesini oluşturma
-        zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
-        st.write("TimeSeries Nesnesi Başarıyla Oluşturuldu!")
-        st.write(zaman_serisi)
-    except Exception as e:
-        st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}")
+st.subheader("TimeSeries Nesnesi")
+try:
+    # TimeSeries nesnesini oluşturma
+    zaman_serisi = TimeSeries.from_dataframe(data, value_cols="y")
+    st.write("TimeSeries Nesnesi Başarıyla Oluşturuldu!")
+    st.write(zaman_serisi)
+except Exception as e:
+    st.error(f"TimeSeries nesnesi oluşturulurken bir hata oluştu: {str(e)}. Lütfen 'y' sütununun varlığını ve veri tipinin uygunluğunu kontrol edin.")
 
-# Encoder Fonksiyonları
+# Encoder Fonksiyonu (gerekirse değiştirin)
 def yil_kodla(idx):
     """Yıl bilgilerini kodlayan özel bir fonksiyon."""
-    return (idx.year - 2000) / 50
-
+    # Eğer gerekliyse farklı bir normalizasyon yöntemi kullanın
+    return (idx.year - data['ds'].dt.year.min()) / (data['ds'].dt.year.max() - data['ds'].dt.year.min())
 # Ekleyicilerin Tanımlanması
 ekleyiciler = {
     'cyclic': {'future': ['day', 'dayofweek', 'week', 'month']},
