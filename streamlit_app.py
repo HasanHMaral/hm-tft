@@ -43,3 +43,8 @@ if uploaded_file is not None:
     ax.set_xlabel("Tarih")
     ax.set_ylabel("PM10")
     st.pyplot(fig)
+# Otokorelasyon Grafiği
+    st.subheader("Otokorelasyon Grafiği (ACF)")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plot_acf(data['y'].dropna(), lags=100, ax=ax)  # Null değerleri kaldırmayı unutmayın
+    st.pyplot(fig)
