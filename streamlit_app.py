@@ -1,10 +1,17 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
+from sklearn.model_selection import ParameterGrid
+
+# Darts kütüphanesi işlevleri
 from darts.timeseries import TimeSeries
+from darts.utils.timeseries_generation import datetime_attribute_timeseries
+from darts.dataprocessing.transformers import Scaler
 from darts.models import TFTModel
-from darts.explainability import TFTExplainer
-from statsmodels.graphics.tsaplots import plot_acf
+
 import io
 
 st.title('🎈 Hava Kirliliği Tahmini Uygulaması')
@@ -49,3 +56,14 @@ if uploaded_file is not None:
     fig, ax = plt.subplots(figsize=(10, 6))
     plot_acf(data['y'].dropna(), lags=100, ax=ax)  # Null değerleri kaldırmayı unutmayın
     st.pyplot(fig)
+# Parsiyel otokorelasyon grafiği
+    st.subheader("Parsiyel Otokorelasyon Grafiği (PACF)")
+    if 'y' in data.columns:
+        if data['y'].isnull().sum() > 0:
+            data['y'] = data['y'].dropna()
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        plot_pacf(data['y'], lags=100, ax=ax, method='ywm')  # PACF grafiği
+        st.pyplot(fig)
+    else:
+        st.error("Veride 'y' sütunu bulunamadı. Lütfen doğru dosyayı yükleyin.")
