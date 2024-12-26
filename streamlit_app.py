@@ -276,7 +276,7 @@ if accelerator == "gpu":
     else:
         st.success("GPU destekleniyor ve kullanılabilir!")
 
-        if st.button("Modeli Eğit"):
+    if st.button("Modeli Eğit"):
             model = tft_model_egit(
                 trans_zaman_serisi,
                 transformed_gecmis_bagimsiz,
