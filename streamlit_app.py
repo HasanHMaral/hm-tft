@@ -224,7 +224,7 @@ if uploaded_file is not None:
         # Tahmin yapma işlemi
         forecasting_horizon = 30
         predictions = model.predict(
-            n=forecasting_horizon,
+            forecasting_horizon,
             series=trans_zaman_serisi,
             past_covariates=transformed_gecmis_bagimsiz,
             future_covariates=transformed_gelecek_bagimsiz
