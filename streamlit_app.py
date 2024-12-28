@@ -160,7 +160,7 @@ def bagimsiz_degiskenleri_olcekle(gecmis_bagimsiz, gelecek_bagimsiz):
     return olcekleyici, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz
 
 # Eğitilmiş modelin yolu
-model_path = "models/tuned_tft_model.pth"  # GitHub deposundaki model dosyası yolu
+model_path = "tuned_tft_model.pth"  # GitHub deposundaki model dosyası yolu
 
 # Eğitilmiş modelin yüklenmesi
 def egitilmis_modeli_yukle(model_path):
