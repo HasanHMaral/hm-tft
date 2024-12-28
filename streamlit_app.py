@@ -100,11 +100,15 @@ def bagimsiz_degiskenleri_olcekle(gecmis_bagimsiz, gelecek_bagimsiz):
         st.error(f"Bağımsız değişkenler ölçeklenirken bir hata oluştu: {str(e)}")
         return None, None, None
 
-# Eğitilmiş model yükleme
+# Model yükleme fonksiyonunu düzenleyin
 def egitilmis_modeli_yukle(model_path):
     try:
         model = TFTModel.load(model_path, map_location="cpu")
-        st.success("Eğitilmiş model başarıyla yüklendi!")
+        if model._fit_called:  # Modelin fit edilmiş olup olmadığını kontrol edin
+            st.success("Eğitilmiş model başarıyla yüklendi ve kullanılabilir!")
+        else:
+            st.error("Model eğitilmemiş görünüyor. Lütfen modeli önce eğitip tekrar yükleyin.")
+            return None
         return model
     except Exception as e:
         st.error(f"Model yüklenirken bir hata oluştu: {str(e)}")
@@ -128,19 +132,26 @@ if uploaded_file:
                             gecmis_bagimsiz, gelecek_bagimsiz)
                         if st.button("Modeli Yükle ve Tahmin Yap"):
                             model = egitilmis_modeli_yukle("tuned_tft_model.pth")
-                            if model and trans_zaman_serisi:
+                            # Tahmin yaparken gerekli kontrolleri ekleyin
+                            if model and trans_zaman_serisi and transformed_gecmis_bagimsiz and transformed_gelecek_bagimsiz:
                                 try:
+                                    # Tahmin yapma
                                     predictions = model.predict(
-                                        n=30,
+                                        n=30,  # Tahmin ufku
                                         series=trans_zaman_serisi,
                                         past_covariates=transformed_gecmis_bagimsiz,
                                         future_covariates=transformed_gelecek_bagimsiz
                                     )
+                            
+                                    # Tahminleri görselleştirme
                                     st.subheader("Tahmin Sonuçları")
                                     fig, ax = plt.subplots(figsize=(10, 6))
                                     ax.plot(trans_zaman_serisi.unscale().pd_series(), label="Gerçek Değerler")
                                     ax.plot(predictions.unscale().pd_series(), label="Tahminler", linestyle="--")
                                     ax.legend()
                                     st.pyplot(fig)
+                            
                                 except Exception as e:
                                     st.error(f"Tahmin yapılırken bir hata oluştu: {str(e)}")
+                            else:
+                                st.warning("Tahmin yapılması için modelin eğitildiğinden veya uygun bir şekilde yüklendiğinden emin olun.")
