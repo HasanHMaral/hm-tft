@@ -17,7 +17,8 @@ import io
 st.title('🎈 Hava Kirliliği Tahmini Uygulaması')
 
 st.info('Bu uygulama derin öğrenme modeli ile tahmin yapar!')
-
+def yil_kodla(idx):
+    return (idx.year - 2000) / 50
 def yukle_ve_isle(dosya_adi):
     """
     Veri yükler, işler ve görselleştirir.
