@@ -201,7 +201,7 @@ if uploaded_file is not None:
         st.success("Tüm veri işleme ve ölçeklendirme adımları başarıyla tamamlandı!")
 
     if st.button("Modeli Yükle"):
-    model = egitilmis_modeli_yukle(model_path)
+        model = egitilmis_modeli_yukle(model_path)
 
     if model:
         # Tahmin yapma işlemi
