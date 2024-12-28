@@ -220,15 +220,15 @@ if uploaded_file is not None:
     if st.button("Modeli Yükle"):
         model = egitilmis_modeli_yukle(model_path)
 
-    if model:
-        # Tahmin yapma işlemi
-        forecasting_horizon = 30
-        predictions = model.predict(
-            forecasting_horizon,
-            series=trans_zaman_serisi,
-            past_covariates=transformed_gecmis_bagimsiz,
-            future_covariates=transformed_gelecek_bagimsiz
-        )
+        if model:
+            # Tahmin yapma işlemi
+            forecasting_horizon = 30
+            predictions = model.predict(
+                forecasting_horizon,
+                series=trans_zaman_serisi,
+                past_covariates=transformed_gecmis_bagimsiz,
+                future_covariates=transformed_gelecek_bagimsiz
+            )
 
         # Tahminleri görselleştirme
         st.subheader("Tahmin Sonuçları")
