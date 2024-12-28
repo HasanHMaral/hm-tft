@@ -158,7 +158,22 @@ def bagimsiz_degiskenleri_olcekle(gecmis_bagimsiz, gelecek_bagimsiz):
     st.write(transformed_gelecek_bagimsiz)
 
     return olcekleyici, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz
+def encoder_ve_ekleyici_olustur():
+    def yil_kodla(idx):
+        return (idx.year - 2000) / 50
 
+    ekleyiciler = {
+        'cyclic': {'future': ['day', 'dayofweek', 'week', 'month']},
+        'datetime_attribute': {'future': ['day', 'dayofweek', 'week', 'month']},
+        'position': {'past': ['relative'], 'future': ['relative']},
+        'custom': {'past': [yil_kodla], 'future': [yil_kodla]},
+        'transformer': Scaler(),
+        'tz': 'CET'
+    }
+    return ekleyiciler
+
+# Yükleme öncesi ekleyiciyi oluştur
+ekleyiciler = encoder_ve_ekleyici_olustur()
 # Eğitilmiş modelin yolu
 model_path = "tuned_tft_model.pth"  # GitHub deposundaki model dosyası yolu
 
