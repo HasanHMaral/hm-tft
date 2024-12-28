@@ -222,7 +222,7 @@ if uploaded_file is not None:
 
     if model:
         # Tahmin yapma işlemi
-        forecasting_horizon = st.number_input("Tahmin Ufku (gün):", min_value=1, max_value=60, value=30, step=1)
+        forecasting_horizon = 30
         predictions = model.predict(
             n=forecasting_horizon,
             series=trans_zaman_serisi,
