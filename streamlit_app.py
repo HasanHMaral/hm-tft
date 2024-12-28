@@ -181,7 +181,8 @@ model_path = "tuned_tft_model.pth"  # GitHub deposundaki model dosyası yolu
 # Eğitilmiş modelin yüklenmesi
 def egitilmis_modeli_yukle(model_path):
     try:
-        model = TFTModel.load(model_path)
+        # Modeli CPU ortamında yüklemek için map_location ayarı
+        model = TFTModel.load(model_path, map_location="cpu")
         st.success("Eğitilmiş model başarıyla yüklendi!")
         return model
     except Exception as e:
