@@ -157,8 +157,9 @@ def modeli_anlamlandir(model):
 
         # Dikkat mekanizmasını görselleştirme
         st.subheader("Dikkat Mekanizması")
-        fig = explainer.plot_attention(explainability_results, plot_type="time")
-        st.pyplot(fig)
+        attention_ax = explainer.plot_attention(explainability_results, plot_type="time")  # Axes nesnesi döner
+        fig_attention = attention_ax.get_figure()  # Axes'ten Figure oluştur
+        st.pyplot(fig_attention)  # Streamlit'te göster
 
     except Exception as e:
         st.error(f"Model analizi yapılırken bir hata oluştu: {str(e)}")
