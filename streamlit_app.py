@@ -5,6 +5,7 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from darts.timeseries import TimeSeries
 from darts.dataprocessing.transformers import Scaler
 from darts.models import TFTModel
+import torch
 import io
 
 # Başlık ve açıklamalar
