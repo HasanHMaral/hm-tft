@@ -219,6 +219,8 @@ if uploaded_file:
                     modeli_egit_ve_kaydet(trans_zaman_serisi, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz)
 
                 if st.button("Tahmin ve Doğrulama Sonuçlarını Göster"):
+                        model = TFTModel.load("ayarli_tft_model_cpu.pth", map_location="cpu")
+                        tahmin = tahmin_yap(model, trans_zaman_serisi, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz, olcekleyici1)
                         # Doğrulama verisi: Son 60 günlük gerçek değerleri kullanabilirsiniz
                         validation_data = data['y'][-60:]
                         tahmin_ve_dogrulama_gorsellestir(tahmin, validation_data, data['y'])
