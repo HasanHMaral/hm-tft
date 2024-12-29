@@ -7,7 +7,7 @@ from darts.dataprocessing.transformers import Scaler
 from darts.models import TFTModel
 import torch
 
-# Başlık ve açıklama
+# Başlık ve açıklamalar
 st.title('🎈 Hava Kirliliği Tahmini ve Model Eğitimi Uygulaması')
 st.info('Bu uygulama ile hem model eğitebilir hem de tahminler yapabilirsiniz!')
 
@@ -25,6 +25,15 @@ def yukle_ve_isle(dosya_adi):
         fig, ax = plt.subplots(figsize=(10, 6))
         data['y'].plot(title='Günlük PM10 Değeri', ax=ax)
         st.pyplot(fig)
+        # Otokorelasyon grafikleri
+        st.subheader("Otokorelasyon Grafiği")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        plot_acf(data['y'], lags=100, ax=ax)
+        st.pyplot(fig)
+        st.subheader("Parsiyel Otokorelasyon Grafiği")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        plot_pacf(data['y'], lags=100, ax=ax)
+        st.pyplot(fig)
         return data
     except Exception as e:
         st.error(f"Veri yüklenirken bir hata oluştu: {str(e)}")
@@ -40,6 +49,59 @@ def zaman_serisi_olustur(data):
     except Exception as e:
         st.error(f"Zaman serisi oluşturulurken bir hata oluştu: {str(e)}")
         return None
+
+# Zaman serisi ölçekleme
+def zaman_serisi_olcekle(zaman_serisi):
+    try:
+        olcekleyici = Scaler()
+        trans_zaman_serisi = olcekleyici.fit_transform(zaman_serisi)
+        st.write("Zaman Serisi Ölçeklendirilmiş:")
+        st.write(trans_zaman_serisi)
+        return olcekleyici, trans_zaman_serisi
+    except Exception as e:
+        st.error(f"Zaman serisi ölçeklenirken bir hata oluştu: {str(e)}")
+        return None, None
+
+# Geçmiş bağımsız değişkenler
+def gecmis_bagimsiz_hazirla(data):
+    try:
+        X_gecmis = data.iloc[:, 2:]
+        gecmis_bagimsiz = TimeSeries.from_dataframe(X_gecmis)
+        st.write("Geçmiş Bağımsız Değişkenler:")
+        st.write(gecmis_bagimsiz)
+        return gecmis_bagimsiz
+    except Exception as e:
+        st.error(f"Geçmiş bağımsız değişkenler hazırlanırken bir hata oluştu: {str(e)}")
+        return None
+
+# Gelecek bağımsız değişkenler
+def gelecek_bagimsiz_hazirla(gecmis_bagimsiz, gelecek_veri_dosyasi):
+    try:
+        gelecek_veri = pd.read_csv(gelecek_veri_dosyasi, index_col='ds', parse_dates=True)
+        X_gelecek = gelecek_veri.iloc[:, 1:]
+        bagimsiz_tum = pd.concat([gecmis_bagimsiz.pd_dataframe(), X_gelecek])
+        gelecek_bagimsiz = TimeSeries.from_dataframe(bagimsiz_tum)
+        st.write("Gelecek Bağımsız Değişkenler:")
+        st.write(gelecek_bagimsiz)
+        return gelecek_bagimsiz
+    except Exception as e:
+        st.error(f"Gelecek bağımsız değişkenler hazırlanırken bir hata oluştu: {str(e)}")
+        return None
+
+# Bağımsız değişkenleri ölçekleme
+def bagimsiz_degiskenleri_olcekle(gecmis_bagimsiz, gelecek_bagimsiz):
+    try:
+        olcekleyici = Scaler()
+        transformed_gecmis_bagimsiz = olcekleyici.fit_transform(gecmis_bagimsiz)
+        transformed_gelecek_bagimsiz = olcekleyici.fit_transform(gelecek_bagimsiz)
+        st.write("Geçmiş Bağımsız Değişkenler Ölçeklendirilmiş:")
+        st.write(transformed_gecmis_bagimsiz)
+        st.write("Gelecek Bağımsız Değişkenler Ölçeklendirilmiş:")
+        st.write(transformed_gelecek_bagimsiz)
+        return olcekleyici, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz
+    except Exception as e:
+        st.error(f"Bağımsız değişkenler ölçeklenirken bir hata oluştu: {str(e)}")
+        return None, None, None
 
 # Model eğitme ve kaydetme
 def modeli_egit_ve_kaydet(trans_zaman_serisi, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz):
@@ -91,20 +153,15 @@ if uploaded_file:
             olcekleyici1, trans_zaman_serisi = zaman_serisi_olcekle(zaman_serisi)
 
             # Geçmiş bağımsız değişkenler
-            X_gecmis = data.iloc[:, 2:]
-            gecmis_bagimsiz = TimeSeries.from_dataframe(X_gecmis)
+            gecmis_bagimsiz = gecmis_bagimsiz_hazirla(data)
 
             # Gelecek bağımsız değişkenler için yükleme
             future_file = st.file_uploader("Gelecek bağımsız değişken verilerini yükleyin (CSV)", type=["csv"])
             if future_file:
-                gelecek_veri = pd.read_csv(future_file, index_col='ds', parse_dates=True)
-                X_gelecek = gelecek_veri.iloc[:, 1:]
-                bagimsiz_tum = pd.concat([gecmis_bagimsiz.pd_dataframe(), X_gelecek])
-                gelecek_bagimsiz = TimeSeries.from_dataframe(bagimsiz_tum)
+                gelecek_bagimsiz = gelecek_bagimsiz_hazirla(gecmis_bagimsiz, future_file)
 
-                olcekleyici2 = Scaler()
-                transformed_gecmis_bagimsiz = olcekleyici2.fit_transform(gecmis_bagimsiz)
-                transformed_gelecek_bagimsiz = olcekleyici2.fit_transform(gelecek_bagimsiz)
+                olcekleyici2, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz = bagimsiz_degiskenleri_olcekle(
+                    gecmis_bagimsiz, gelecek_bagimsiz)
 
                 # Eğitim ve tahmin işlemleri
                 if st.button("Modeli Eğit ve Kaydet"):
