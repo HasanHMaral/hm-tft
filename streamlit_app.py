@@ -180,7 +180,7 @@ def modeli_anlamlandir(model):
 
         # Değişken önemini görselleştirme
         st.subheader("Değişken Önemi")
-        fig = explainer.plot_variable_selection(explainability_results, fig_size=(10, 10))
+        fig = explainer.plot_variable_selection(explainability_results, fig_size=(20,20))
         st.pyplot(fig)
 
         # Dikkat mekanizmasını görselleştirme
