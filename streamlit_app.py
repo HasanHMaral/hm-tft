@@ -152,8 +152,9 @@ def modeli_anlamlandir(model):
 
         # Değişken önemini görselleştirme
         st.subheader("Değişken Önemi")
-        fig = explainer.plot_variable_selection(explainability_results, fig_size=(10, 10))
-        st.pyplot(fig)
+        variable_importance_ax = explainer.plot_variable_selection(explainability_results)  # Axes nesnesi döner
+        fig_variable = variable_importance_ax.get_figure()  # Axes'ten Figure oluştur
+        st.pyplot(fig_variable)  # Streamlit'te göster
 
         # Dikkat mekanizmasını görselleştirme
         st.subheader("Dikkat Mekanizması")
