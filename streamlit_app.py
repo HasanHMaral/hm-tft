@@ -143,6 +143,34 @@ def tahmin_yap(model, trans_zaman_serisi, transformed_gecmis_bagimsiz, transform
     except Exception as e:
         st.error(f"Tahmin yapılırken bir hata oluştu: {str(e)}")
         return None
+# Tahmin ve doğrulama sonuçlarını görselleştirme
+def tahmin_ve_dogrulama_gorsellestir(predictions, validation, original_data):
+    try:
+        st.subheader("Tahmin ve Doğrulama Sonuçları")
+        
+        # Matplotlib figürü oluşturma
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        # Orijinal veriyi çizin
+        ax.plot(original_data, label="Gerçek Değerler", color="blue", linewidth=2)
+
+        # Doğrulama verisini çizin
+        ax.plot(validation, label="Doğrulama Verileri", color="orange", linestyle="--", linewidth=2)
+
+        # Tahmin verilerini çizin
+        ax.plot(predictions, label="Tahminler", color="green", linestyle="-.", linewidth=2)
+
+        # Grafik ayarları
+        ax.set_xlabel("Zaman")
+        ax.set_ylabel("PM10")
+        ax.set_title("Tahmin ve Doğrulama Sonuçları")
+        ax.legend()  # Etiketleri göster
+
+        # Streamlit ile grafiği göster
+        st.pyplot(fig)
+
+    except Exception as e:
+        st.error(f"Tahmin ve doğrulama sonuçları görselleştirilirken bir hata oluştu: {str(e)}")
 
 # Model analizi
 def modeli_anlamlandir(model):
@@ -201,4 +229,10 @@ if uploaded_file:
                         ax.set_title("TFT Tahmin")
                         ax.legend()
                         st.pyplot(fig)
+
+                    if st.button("Tahmin ve Doğrulama Sonuçlarını Göster"):
+                        # Doğrulama verisi: Son 60 günlük gerçek değerleri kullanabilirsiniz
+                        validation_data = data['y'][-60:]
+                        tahmin_ve_dogrulama_gorsellestir(tahmin, validation_data, data['y'])
+                        
                     modeli_anlamlandir(model)
