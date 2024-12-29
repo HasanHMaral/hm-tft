@@ -137,23 +137,35 @@ if uploaded_file:
                             model = egitilmis_modeli_yukle("ayarli_tft_model_cpu.pth")
                             # Tahmin yaparken gerekli kontrolleri ekleyin
                             if model and trans_zaman_serisi and transformed_gecmis_bagimsiz and transformed_gelecek_bagimsiz:
+                                # Tahmin yapma
                                 try:
-                                    # Tahmin yapma
-                                    predictions = model.predict(
+                                    tahmin = model.predict(
                                         n=30,  # Tahmin ufku
                                         series=trans_zaman_serisi,
                                         past_covariates=transformed_gecmis_bagimsiz,
                                         future_covariates=transformed_gelecek_bagimsiz
                                     )
-                            
+                                
+                                    # Tahminleri ters ölçekleme
+                                    tahmin = TimeSeries.pd_series(olcekleyici1.inverse_transform(tahmin)).rename("TFT")
+                                
                                     # Tahminleri görselleştirme
                                     st.subheader("Tahmin Sonuçları")
                                     fig, ax = plt.subplots(figsize=(10, 6))
-                                    ax.plot(trans_zaman_serisi.unscale().pd_series(), label="Gerçek Değerler")
-                                    ax.plot(predictions.unscale().pd_series(), label="Tahminler", linestyle="--")
+                                
+                                    # Gerçek değerler ve tahminleri çizin
+                                    ax.plot(data['y'], label="Gerçek Değerler")
+                                    ax.plot(tahmin, label="Tahminler", linestyle='dashed')
+                                    
+                                    # Grafik etiketleri ve başlık
+                                    ax.set_xlabel("Zaman")
+                                    ax.set_ylabel("PM10")
+                                    ax.set_title("TFT Tahmin")
                                     ax.legend()
+                                
+                                    # Grafiği Streamlit'te gösterin
                                     st.pyplot(fig)
-                            
+                                
                                 except Exception as e:
                                     st.error(f"Tahmin yapılırken bir hata oluştu: {str(e)}")
                             else:
