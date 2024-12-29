@@ -94,7 +94,10 @@ def bagimsiz_degiskenleri_olcekle(gecmis_bagimsiz, gelecek_bagimsiz):
         olcekleyici = Scaler()
         transformed_gecmis_bagimsiz = olcekleyici.fit_transform(gecmis_bagimsiz)
         transformed_gelecek_bagimsiz = olcekleyici.fit_transform(gelecek_bagimsiz)
-        st.write("Bağımsız Değişkenler Ölçeklendirilmiş:")
+        st.write("Geçmiş Bağımsız Değişkenler Ölçeklendirilmiş:")
+        st.write(transformed_gecmis_bagimsiz)
+        st.write("Gelecek Bağımsız Değişkenler Ölçeklendirilmiş:")
+        st.write(transformed_gelecek_bagimsiz)
         return olcekleyici, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz
     except Exception as e:
         st.error(f"Bağımsız değişkenler ölçeklenirken bir hata oluştu: {str(e)}")
