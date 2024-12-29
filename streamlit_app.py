@@ -152,18 +152,19 @@ def modeli_anlamlandir(model):
 
         # Değişken önemini görselleştirme
         st.subheader("Değişken Önemi")
-        fig_variable, ax_variable = plt.subplots(figsize=(10, 10))  # Yeni bir figür ve eksen oluştur
-        explainer.plot_variable_selection(explainability_results, ax=ax_variable)  # Aksen üzerine çizin
-        st.pyplot(fig_variable)  # Figürü Streamlit'te gösterin
+        variable_importance = explainer.plot_variable_selection(explainability_results)
+        fig_variable = variable_importance.figure  # Matplotlib figürünü al
+        st.pyplot(fig_variable)  # Streamlit'te göster
 
         # Dikkat mekanizmasını görselleştirme
         st.subheader("Dikkat Mekanizması")
-        fig_attention, ax_attention = plt.subplots(figsize=(10, 10))  # Yeni bir figür ve eksen oluştur
-        explainer.plot_attention(explainability_results, ax=ax_attention, plot_type="time")  # Aksen üzerine çizin
-        st.pyplot(fig_attention)  # Figürü Streamlit'te gösterin
+        attention_plot = explainer.plot_attention(explainability_results, plot_type="time")
+        fig_attention = attention_plot.figure  # Matplotlib figürünü al
+        st.pyplot(fig_attention)  # Streamlit'te göster
 
     except Exception as e:
         st.error(f"Model analizi yapılırken bir hata oluştu: {str(e)}")
+
 
 # Kullanıcı girişlerini alma ve işlemleri başlatma
 uploaded_file = st.file_uploader("Hava kalitesi verisini yükleyin (CSV)", type=["csv"])
