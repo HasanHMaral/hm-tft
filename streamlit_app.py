@@ -152,13 +152,15 @@ def modeli_anlamlandir(model):
 
         # Değişken önemini görselleştirme
         st.subheader("Değişken Önemi")
-        explainer.plot_variable_selection(explainability_results, fig_size=(15, 15))
-        plt.show()
+        fig, ax = plt.subplots(figsize=(10, 10))
+        explainer.plot_variable_selection(explainability_results, ax=ax)
+        st.pyplot(fig)
 
         # Dikkat mekanizmasını görselleştirme
         st.subheader("Dikkat Mekanizması")
-        explainer.plot_attention(explainability_results, plot_type="time")
-        plt.show()
+        fig, ax = plt.subplots(figsize=(10, 10))
+        explainer.plot_attention(explainability_results, ax=ax, plot_type="time")
+        st.pyplot(fig)
     except Exception as e:
         st.error(f"Model analizi yapılırken bir hata oluştu: {str(e)}")
 
