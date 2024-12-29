@@ -134,7 +134,7 @@ if uploaded_file:
                         olcekleyici2, transformed_gecmis_bagimsiz, transformed_gelecek_bagimsiz = bagimsiz_degiskenleri_olcekle(
                             gecmis_bagimsiz, gelecek_bagimsiz)
                         if st.button("Modeli Yükle ve Tahmin Yap"):
-                            model = egitilmis_modeli_yukle("tuned_tft_model_cpu.pth")
+                            model = egitilmis_modeli_yukle("ayarli_tft_model_cpu.pth")
                             # Tahmin yaparken gerekli kontrolleri ekleyin
                             if model and trans_zaman_serisi and transformed_gecmis_bagimsiz and transformed_gelecek_bagimsiz:
                                 try:
