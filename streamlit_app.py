@@ -152,7 +152,7 @@ def modeli_anlamlandir(model):
 
         # Değişken önemini görselleştirme
         st.subheader("Değişken Önemi")
-        explainer.plot_variable_selection(explainability_results, fig_size=(10, 10))
+        explainer.plot_variable_selection(explainability_results, fig_size=(15, 15))
         plt.show()
 
         # Dikkat mekanizmasını görselleştirme
