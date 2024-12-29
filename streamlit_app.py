@@ -197,8 +197,4 @@ if uploaded_file:
                         ax.set_title("TFT Tahmin")
                         ax.legend()
                         st.pyplot(fig)
-
-                # Modeli anlamlandırma
-                if st.button("Modeli Anlamlandır ve Görselleştir"):
-                    model = TFTModel.load("ayarli_tft_model_cpu.pth", map_location="cpu")
                     modeli_anlamlandir(model)
