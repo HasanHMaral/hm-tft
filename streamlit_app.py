@@ -112,6 +112,8 @@ def egitilmis_modeli_yukle(model_path):
             st.success("Eğitilmiş model başarıyla yüklendi ve kullanılabilir!")
         else:
             st.error("Model eğitilmemiş görünüyor. Lütfen modeli önce eğitip tekrar yükleyin.")
+            st.write(f"Darts sürümü: {darts.__version__}")
+            st.write(f"PyTorch sürümü: {torch.__version__}")
             return None
         return model
     except Exception as e:
