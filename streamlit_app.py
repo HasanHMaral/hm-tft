@@ -11,7 +11,7 @@ import io
 # Başlık ve açıklamalar
 st.title('🎈 Hava Kirliliği Tahmini Uygulaması')
 st.info('Bu uygulama derin öğrenme modeli ile tahmin yapar!')
-
+pip show pandas
 # Yıl kodlama fonksiyonu
 def yil_kodla(idx):
     return (idx.year - 2000) / 50
