@@ -5,11 +5,12 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from darts.timeseries import TimeSeries
 from darts.dataprocessing.transformers import Scaler
 from darts.models import TFTModel
+from darts.explainability import TFTExplainer
 import torch
 
 # Başlık ve açıklamalar
-st.title('🎈 Hava Kirliliği Tahmini ve Model Eğitimi Uygulaması')
-st.info('Bu uygulama ile hem model eğitebilir hem de tahminler yapabilirsiniz!')
+st.title('🎈 Hava Kirliliği Tahmini ve Model Analizi Uygulaması')
+st.info('Bu uygulama ile modeli eğitebilir, tahmin yapabilir ve modelin davranışını analiz edebilirsiniz!')
 
 # Yıl kodlama fonksiyonu
 def yil_kodla(idx):
@@ -143,6 +144,24 @@ def tahmin_yap(model, trans_zaman_serisi, transformed_gecmis_bagimsiz, transform
         st.error(f"Tahmin yapılırken bir hata oluştu: {str(e)}")
         return None
 
+# Model analizi
+def modeli_anlamlandir(model):
+    try:
+        explainer = TFTExplainer(model)
+        explainability_results = explainer.explain()
+
+        # Değişken önemini görselleştirme
+        st.subheader("Değişken Önemi")
+        explainer.plot_variable_selection(explainability_results, fig_size=(10, 10))
+        plt.show()
+
+        # Dikkat mekanizmasını görselleştirme
+        st.subheader("Dikkat Mekanizması")
+        explainer.plot_attention(explainability_results, plot_type="time")
+        plt.show()
+    except Exception as e:
+        st.error(f"Model analizi yapılırken bir hata oluştu: {str(e)}")
+
 # Kullanıcı girişlerini alma ve işlemleri başlatma
 uploaded_file = st.file_uploader("Hava kalitesi verisini yükleyin (CSV)", type=["csv"])
 if uploaded_file:
@@ -178,3 +197,8 @@ if uploaded_file:
                         ax.set_title("TFT Tahmin")
                         ax.legend()
                         st.pyplot(fig)
+
+                # Modeli anlamlandırma
+                if st.button("Modeli Anlamlandır ve Görselleştir"):
+                    model = TFTModel.load("ayarli_tft_model_cpu.pth", map_location="cpu")
+                    modeli_anlamlandir(model)
